@@ -36,9 +36,13 @@ namespace FreeSCPs
             {
                 var door = Door.Get(doorName);
                 if (door.IsOpen || door.RequiredPermissions.RequiredPermissions.HasFlag(KeycardPermissions.ScpOverride))
-                    return; // ply not stuck
+                {
+                    Escaped();
+                    return;
+                }
 
                 // ply now stuck
+                Log.Debug("Player in a room");
                 LastRoom = Player.CurrentRoom.Type;
                 StuckSince = DateTime.Now;
                 BroadcastCoroutine = Timing.CallDelayed(Plugin.Instance.Config.SecondsBeforeMessage, () => Player.Broadcast(5, Plugin.Instance.Config.MessageContent));
@@ -47,13 +51,13 @@ namespace FreeSCPs
 
             if (LastRoom != type) // ply escaped
             {
-                StuckSince = default;
-                Timing.KillCoroutines(BroadcastCoroutine);
+                Escaped();
                 return;
             }
 
             if ((DateTime.Now - StuckSince).TotalSeconds > Plugin.Instance.Config.SecondsBeforeOpening) // unstuck player
             {
+                Log.Debug("Player freed!");
                 var pos = GetEscapePosition(doorName);
                 Player.Broadcast(5, Plugin.Instance.Config.OpeningMessage);
                 Player.Position = pos;
@@ -61,15 +65,24 @@ namespace FreeSCPs
             }
         }
 
+        public void Escaped()
+        {
+            Log.Debug("Player escaped the room!");
+            StuckSince = default;
+            Timing.KillCoroutines(BroadcastCoroutine);
+        }
+
         private void Awake()
         {
             Player = Player.Get(gameObject);
             Exiled.Events.Handlers.Player.Died += CheckForDeath;
             Exiled.Events.Handlers.Player.ChangingRole += CheckForChangeRole;
+            Log.Debug($"Added FreeSCP component to {Player.Nickname}");
         }
 
         private void OnDisable()
         {
+            Log.Debug($"Deleted {Player.Nickname}'s FreeSCP component");
             Exiled.Events.Handlers.Player.ChangingRole -= CheckForChangeRole;
             Exiled.Events.Handlers.Player.Died -= CheckForDeath;
             Timing.KillCoroutines(BroadcastCoroutine);
