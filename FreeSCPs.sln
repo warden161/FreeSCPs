@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeSCPs", "FreeSCPs.csproj", "{5191BE8C-EC32-4D5B-BFA9-240491CB4366}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeSCPs", "FreeSCPs\FreeSCPs.csproj", "{5191BE8C-EC32-4D5B-BFA9-240491CB4366}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
