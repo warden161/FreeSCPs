@@ -29,8 +29,12 @@ namespace FreeSCPs
             _timer = TimerRate;
             var type = Player.CurrentRoom.Type;
 
+
             if (!Plugin.Instance.Config.Rooms.TryGetValue(type, out var doorName))
-                return; // ply not stuck
+            {
+                if (StuckSince != default)
+                    Escaped();
+            }
 
             if (StuckSince == default)
             {
